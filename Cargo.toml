@@ -1,0 +1,29 @@
+[package]
+name = "magi-nx-axi"
+version = "0.1.0"
+edition = "2024"
+rust-version = "1.85"
+license = "ISC"
+description = "Agent-native Nx workspace, IDE, and Nx Cloud CLI with TOON output"
+repository = "https://github.com/magimetal/magi-axi-nx"
+homepage = "https://github.com/magimetal/magi-axi-nx"
+documentation = "https://github.com/magimetal/magi-axi-nx#readme"
+
+[[bin]]
+name = "magi-nx-axi"
+path = "src/main.rs"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive", "env"] }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+ureq = { version = "3", features = ["json"] }
+toon-format = "0.5"
+url = "2"
+flate2 = "1"
+tar = "0.4"
+regex = "1"
+
+[dev-dependencies]
+assert_cmd = "2"
+tempfile = "3"

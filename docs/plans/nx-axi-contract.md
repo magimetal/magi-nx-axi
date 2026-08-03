@@ -2,7 +2,7 @@
 
 Mode: New-Build  
 Repository: `magi-axi-nx`  
-Runtime: Rust 2024, MSRV 1.85  
+Runtime: Rust 2024, MSRV 1.87
 Platforms: macOS/Linux; Windows IDE socket N/A in v0.1  
 Distribution: Cargo source install and release binaries/checksums  
 Capability source: local Nx Console checkout, commit inspected during build  

@@ -17,13 +17,14 @@ fn socket_paths(root: &Path) -> Vec<PathBuf> {
     }
     let mut paths = Vec::new();
     let script = "const {hashArray}=require('nx/src/native');process.stdout.write(hashArray([process.argv[1].toLowerCase(),'nx-console']))";
-    if let Ok(output) = Command::new("node")
+    if let Some(hash) = Command::new("node")
         .args(["-e", script, &root.to_string_lossy()])
         .current_dir(root)
         .output()
-        && output.status.success()
-        && let Ok(hash) = String::from_utf8(output.stdout)
-        && !hash.trim().is_empty()
+        .ok()
+        .filter(|output| output.status.success())
+        .and_then(|output| String::from_utf8(output.stdout).ok())
+        .filter(|hash| !hash.trim().is_empty())
     {
         paths.push(
             std::env::temp_dir()

@@ -315,13 +315,17 @@ fn current_branch(root: &std::path::Path) -> Result<String, String> {
 fn cloud_url_parts(raw: &str) -> Result<(&'static str, String, Option<String>), String> {
     let url = url::Url::parse(raw).map_err(|_| "invalid Nx Cloud URL")?;
     let parts: Vec<_> = url.path_segments().map(|x| x.collect()).unwrap_or_default();
-    if let Some(index) = parts.iter().position(|part| *part == "cipes")
-        && let Some(id) = parts.get(index + 1)
+    if let Some(id) = parts
+        .iter()
+        .position(|part| *part == "cipes")
+        .and_then(|index| parts.get(index + 1))
     {
         return Ok(("cipe", (*id).into(), None));
     }
-    if let Some(index) = parts.iter().position(|part| *part == "runs")
-        && let Some(id) = parts.get(index + 1)
+    if let Some(id) = parts
+        .iter()
+        .position(|part| *part == "runs")
+        .and_then(|index| parts.get(index + 1))
     {
         let task = parts
             .iter()
@@ -498,10 +502,10 @@ fn execute(c: &Cli) -> Result<Value, String> {
                     .iter()
                     .find(|value| value["name"].as_str() == Some(name.as_str()))
                     .ok_or_else(|| format!("project not found: {name}"))?;
-                if let Some(task) = task
-                    && project.pointer(&format!("/targets/{task}")).is_none()
-                {
-                    return Err(format!("target not found: {name}:{task}"));
+                if let Some(task) = task {
+                    if project.pointer(&format!("/targets/{task}")).is_none() {
+                        return Err(format!("target not found: {name}:{task}"));
+                    }
                 }
             }
             ide::notify_graph(&root, kind, project.as_deref(), task.as_deref())?;
@@ -603,10 +607,10 @@ fn execute(c: &Cli) -> Result<Value, String> {
                 run.clone()
             } else if let Some(url) = url {
                 let (_, id, task_from_url) = cloud_url_parts(url)?;
-                if let Some(url_task) = task_from_url
-                    && url_task != *task
-                {
-                    return Err(format!("task URL identifies `{url_task}`, not `{task}`"));
+                if let Some(url_task) = task_from_url {
+                    if url_task != *task {
+                        return Err(format!("task URL identifies `{url_task}`, not `{task}`"));
+                    }
                 }
                 id
             } else {

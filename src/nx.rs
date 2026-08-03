@@ -194,21 +194,22 @@ pub fn plugins(root: Option<&Path>) -> Result<Vec<Value>, String> {
     if let Ok(community) = remote_json(
         "NX_AXI_COMMUNITY_PLUGINS_URL",
         "https://raw.githubusercontent.com/nrwl/nx/master/astro-docs/src/content/approved-community-plugins.json",
-    ) && let Some(items) = community.as_array()
-    {
-        for item in items {
-            let Some(name) = item.get("name").and_then(Value::as_str) else {
-                continue;
-            };
-            plugins.entry(name.into()).or_insert_with(|| {
-                json!({
-                    "name":name,
-                    "source":"community",
-                    "version":Value::Null,
-                    "description":item.get("description").cloned().unwrap_or(Value::Null),
-                    "url":item.get("url").cloned().unwrap_or(Value::Null)
-                })
-            });
+    ) {
+        if let Some(items) = community.as_array() {
+            for item in items {
+                let Some(name) = item.get("name").and_then(Value::as_str) else {
+                    continue;
+                };
+                plugins.entry(name.into()).or_insert_with(|| {
+                    json!({
+                        "name":name,
+                        "source":"community",
+                        "version":Value::Null,
+                        "description":item.get("description").cloned().unwrap_or(Value::Null),
+                        "url":item.get("url").cloned().unwrap_or(Value::Null)
+                    })
+                });
+            }
         }
     }
     Ok(plugins.into_values().collect())

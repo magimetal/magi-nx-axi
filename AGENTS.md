@@ -11,7 +11,7 @@ Rust 2024 agent-facing Nx CLI. Binary `magi-nx-axi`; default stdout TOON, JSON v
 - Never use `npx`, global Nx, shell-interpolated subprocess arguments, MCP transport, or Nx Console TypeScript libraries.
 - Workspace analysis uses trusted workspace-local Nx. IDE methods use direct JSON-RPC. Cloud/docs/plugin catalogs use validated direct HTTPS; loopback HTTP exists only for tests.
 - Preserve all 13 Nx MCP-equivalent command capabilities plus `cipes` and explicit `setup`.
-- Keep README, `docs/plans/nx-axi-contract.md`, parser help, and `skills/magi-nx-axi/SKILL.md` synchronized.
+- Keep README, `CHANGELOG.md`, `docs/plans/nx-axi-contract.md`, `docs/release.md`, parser help, and `skills/magi-nx-axi/SKILL.md` synchronized.
 
 ## Layout
 
@@ -21,14 +21,19 @@ Rust 2024 agent-facing Nx CLI. Binary `magi-nx-axi`; default stdout TOON, JSON v
 - `src/cloud.rs`: Nx Cloud auth, requests, artifacts, self-healing.
 - `src/setup.rs`: atomic project agent integrations.
 - `tests/integration.rs`: real-binary hermetic acceptance tests.
+- `docs/release.md`: crates.io and GitHub release gates, bootstrap, and publication sequence.
+- `.github/workflows/release.yml`: validated crates.io publish and tagged macOS/Linux artifacts.
 
 ## Required gate
 
 ```sh
 cargo fmt --check
+cargo check --locked
 cargo test --locked
 cargo clippy --all-targets --all-features --locked -- -D warnings
 cargo build --release --locked
+cargo deny check
+cargo package --locked
 ```
 
 For protocol changes, add hermetic request/socket/file evidence. Never require developer credentials or live provider state in CI.
